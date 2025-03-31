@@ -180,7 +180,7 @@ Run the cell below to identify any missing packages to install, and then load
 all of the required packages.
 
 ```{r, warning = FALSE, message = FALSE}
-packages <- c('rmarkdown','earthdatalogin', 'rstac','imager','lubridate','xts','dygraphs','leaflet','terra')              
+packages <- c('earthdatalogin', 'rstac','imager','lubridate','xts','dygraphs','leaflet','terra')              
 
 # Identify missing (not installed) packages
 new.packages = packages[!(packages %in% installed.packages()[,"Package"])]
@@ -259,7 +259,7 @@ the 'hls_tutorial_r' repository named `FieldBoundary.geojson`. Read the file in
 and use it to perform the spatial subset.  
 
 ```{r, results= "hide"}
-roi <- terra::vect("data/Field_Boundary.geojson")
+roi <- terra::vect("../data/Field_Boundary.geojson")
 ```
 
 We will use the `leaflet` package to plot the agricultural fields boundary on 
@@ -272,7 +272,7 @@ leaflet() %>%
   addMiniMap(zoomLevelFixed = 5)
 ```
 
-This map provides a visual representation of our study area. To perfor a 
+This map provides a visual representation of our study area. To perform a 
 spatial search using the CMR-STAC we need to define the "bounding box" using
 the lower left and upper right coordinates of our area of interest. The `terra`
 package offers a convenient solution to get this information. Below, we'll 
@@ -361,6 +361,7 @@ binding it to our spatial dataframe.
 ```{r}
 # Retrieve Granule ID for each feature
 granule_id <- sapply(items$features, function(feature) feature$id)
+
 # Add as first column in sf_items
 sf_items <- cbind(granule = granule_id, sf_items)
 View(sf_items)
@@ -425,6 +426,7 @@ to filter our results. We'll filter out any scenes with more than 30% cloud cove
 ```{r}
 # Filter based on cloud cover
 sf_items <- sf_items[sf_items$eo.cloud_cover < 30,]
+
 # Reset Row Indices
 row.names(sf_items) <- NULL
 View(sf_items)
@@ -520,6 +522,12 @@ calculate_NDVI <- function(nir, red){
   ndvi <- (nir-red)/(nir+red)
   return(ndvi)
 }
+
+calculate_NIRv <- function(nir, red){ 
+  nirv <- ((nir-red)/(nir+red))*nir
+  return(nirv)
+}
+
 ```
 
 Now we can calculate NDVI from the list of red and nir rasters.  
@@ -701,6 +709,7 @@ map <- map %>%
   addLayersControl(baseGroups = names(ndvi_masked),
                    options = layersControlOptions(collapsed = FALSE), position = 'topleft') %>%
   addLegend(pal = pal, values = c(0, 1), title = 'NDVI')
+
 # Show map
 map
 ```
