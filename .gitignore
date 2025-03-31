@@ -10,3 +10,4 @@ ignore
 *.Ruserdata*
 *.Rproj.user*
 *data/R_Output/*
+.Rproj.user
